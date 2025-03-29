@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MovieModel extends RatingModel {
+public class MovieModel{
 	
 	private int movie_id;
 	private String movieName;
 	private String duration;
-	private String genres;
 	private String language;
 	private String year;
 	private String director;
