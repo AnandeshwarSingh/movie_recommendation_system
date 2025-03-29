@@ -1,5 +1,16 @@
 package com.example.demo.Repository;
 
-public interface AdminRepository {
+import java.util.List;
 
+import com.example.demo.Model.GenreModel;
+import com.example.demo.Model.MovieModel;
+import com.example.demo.Model.UserModel;
+
+public interface AdminRepository {
+	
+	public boolean isAddGenre(GenreModel genre);
+	public List<GenreModel> getAllGenre();
+	public boolean isDeleteGenre(int id);
+	public boolean isUpdateGenre(GenreModel genre);
+	
 }
