@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Repository.AdminRepositoryImpl;
@@ -14,6 +15,11 @@ public class AdminServiceImpl implements AdminService{
 	@Autowired
 	AdminRepositoryImpl adminRepo;
 	
+	@Override
+	public boolean authenticateAdmin(String username, String password) {
+		// TODO Auto-generated method stub
+		return adminRepo.validateAdmin(username, password);
+	}
 	@Override
 	public boolean isAddGenre(GenreModel genre) {
 		return adminRepo.isAddGenre(genre);
