@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
+import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Model.UserModel;
 
@@ -23,40 +24,80 @@ public class AdminRepositoryImpl implements AdminRepository {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
-	Query qry;
-	
 	@Override
 	public boolean validateAdmin(String username, String password) {
-		   List<Map<String, Object>> result = jdbcTemplate.queryForList(qry.getAdmin, username, password);
+		   String sql="select * from admin WHERE  name=? AND password=?;";
+		   List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, username, password);
 	        return !result.isEmpty();
 	}
 	
 	@Override
 	public boolean isAddGenre(GenreModel genre) {
-		int val=jdbcTemplate.update(qry.addGenre,genre.getName());
+		String sql="insert into genres values('0',?);";
+		int val=jdbcTemplate.update(sql,genre.getName());
 		return val>0;
 	}
 
 	@Override
 	public List<GenreModel> getAllGenre() {
-		List<GenreModel> list=jdbcTemplate.query(qry.showGenre,(ResultSet rs, int rowNum)->{
-				GenreModel genre=new GenreModel();
-				genre.setGenre_id(rs.getInt(1));
-				genre.setName(rs.getString(2));
-				return genre;
+		String sql="select * from genres";
+		List<GenreModel> list=jdbcTemplate.query(sql,(ResultSet rs, int rowNum)->{
+				return new GenreModel(rs.getInt(1),rs.getString(2));
 		});
 		return list;
 	}
 
 	@Override
 	public boolean isDeleteGenre(int id) {
-			int val=jdbcTemplate.update(qry.deleteGenre,id);
+		String sql="delete from genres where  genre_id=?;";
+			int val=jdbcTemplate.update(sql,id);
 			return val>0;
 	}
 
 	@Override
 	public boolean isUpdateGenre(GenreModel genre) {
-		int val=jdbcTemplate.update(qry.updateGenre,genre.getName(), genre.getGenre_id());
+		String sql="update genres set name=? where genre_id=?;";
+		int val=jdbcTemplate.update(sql,genre.getName(), genre.getGenre_id());
+		return val>0;
+	}
+
+	@Override
+	public boolean addLanguage(LanguageModel language) {
+		String sql = "INSERT INTO language VALUES ('0',?)";
+		int val=jdbcTemplate.update(sql,language.getLanguageName());
+        return val>0;
+	}
+
+	@Override
+	public List<LanguageModel> getAllLanguages() {
+		  String sql = "SELECT * FROM language";
+		  List<LanguageModel> list=jdbcTemplate.query(sql, new RowMapper<LanguageModel>() {
+	            @Override
+	            public LanguageModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+	                return new LanguageModel(rs.getInt(1),rs.getString(2));
+	            }
+	        });
+		  return list;
+	}
+
+	@Override
+	public LanguageModel getLanguageById(int id) {
+		String sql = "SELECT * FROM language WHERE language_id = ?";
+		//Search Incomplete
+		return null;
+	}
+
+	@Override
+	public boolean isUpdateLanguage(LanguageModel language) {
+		String sql = "UPDATE language SET language_name = ? WHERE language_id = ?";
+		int val=jdbcTemplate.update(sql, language.getLanguageName(), language.getLanguageId());
+		return val>0;
+	}
+
+	@Override
+	public boolean isDeleteLanguage(int id) {
+		String sql = "DELETE FROM language WHERE language_id = ?";
+		int val=jdbcTemplate.update(sql, id);
 		return val>0;
 	}
 
