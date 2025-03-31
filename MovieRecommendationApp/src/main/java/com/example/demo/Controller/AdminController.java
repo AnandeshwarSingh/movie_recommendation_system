@@ -3,28 +3,42 @@ package com.example.demo.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import com.example.demo.CustomException.GenreNotFoundException;
-
+import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Service.AdminServiceImpl;
 
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
 	
 	List<GenreModel> mlist;
 	
 	@Autowired
 	AdminServiceImpl adminService;
+	
+	@PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AdminModel admin) {
+        boolean isValid = adminService.authenticateAdmin(admin.getUsername(), admin.getPassword());
+
+        if (isValid) {
+            return ResponseEntity.ok("Admin login successful!");
+        } else {
+            return ResponseEntity.status(401).body("Invalid username or password");
+        }
+    }
 	
 	@PostMapping("/addGenre")
 	public String addGenre(@RequestBody GenreModel genre) {

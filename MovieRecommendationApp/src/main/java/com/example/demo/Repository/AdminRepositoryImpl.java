@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +12,7 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Model.UserModel;
@@ -22,6 +24,12 @@ public class AdminRepositoryImpl implements AdminRepository {
 	JdbcTemplate jdbcTemplate;
 	
 	Query qry;
+	
+	@Override
+	public boolean validateAdmin(String username, String password) {
+		   List<Map<String, Object>> result = jdbcTemplate.queryForList(qry.getAdmin, username, password);
+	        return !result.isEmpty();
+	}
 	
 	@Override
 	public boolean isAddGenre(GenreModel genre) {

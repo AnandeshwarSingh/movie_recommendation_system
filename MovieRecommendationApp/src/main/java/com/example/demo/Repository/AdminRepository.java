@@ -8,6 +8,7 @@ import com.example.demo.Model.UserModel;
 
 public interface AdminRepository {
 	
+	public boolean validateAdmin(String username, String password);
 	public boolean isAddGenre(GenreModel genre);
 	public List<GenreModel> getAllGenre();
 	public boolean isDeleteGenre(int id);
