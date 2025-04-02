@@ -60,6 +60,8 @@ public class AdminRepositoryImpl implements AdminRepository {
 		int val=jdbcTemplate.update(sql,genre.getName(), genre.getGenre_id());
 		return val>0;
 	}
+	
+	// Add Language
 
 	@Override
 	public boolean addLanguage(LanguageModel language) {
@@ -67,7 +69,8 @@ public class AdminRepositoryImpl implements AdminRepository {
 		int val=jdbcTemplate.update(sql,language.getLanguageName());
         return val>0;
 	}
-
+	
+	// View Language
 	@Override
 	public List<LanguageModel> getAllLanguages() {
 		  String sql = "SELECT * FROM language";
@@ -79,6 +82,8 @@ public class AdminRepositoryImpl implements AdminRepository {
 	        });
 		  return list;
 	}
+	
+	//Get Language By Id
 
 	@Override
 	public LanguageModel getLanguageById(int id) {
@@ -86,6 +91,8 @@ public class AdminRepositoryImpl implements AdminRepository {
 		//Search Incomplete
 		return null;
 	}
+	
+	// Update Language
 
 	@Override
 	public boolean isUpdateLanguage(LanguageModel language) {
@@ -93,6 +100,8 @@ public class AdminRepositoryImpl implements AdminRepository {
 		int val=jdbcTemplate.update(sql, language.getLanguageName(), language.getLanguageId());
 		return val>0;
 	}
+	
+	// Delete Language
 
 	@Override
 	public boolean isDeleteLanguage(int id) {
