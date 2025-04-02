@@ -24,4 +24,7 @@ public interface AdminService {
 //	public LanguageModel getLanguageById(int id);
 	public boolean isUpdateLanguage(LanguageModel language);
 	public boolean isDeleteLanguage(int id); 
+	
+	//CRUD Operation For Movie
+	public boolean addMovie(MovieModel movie);
 }

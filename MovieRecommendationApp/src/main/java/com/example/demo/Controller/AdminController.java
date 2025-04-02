@@ -102,5 +102,10 @@ public class AdminController {
 		}
 	}
 	
+	//ADD Movie
+	@PostMapping("/addMovie")
+	public String addMovie(@RequestBody MovieModel movie) {
+		return (adminService.addMovie(movie))?"Genre Added Successfully":"OOPs Failed to Add";
+	}
 	
 }

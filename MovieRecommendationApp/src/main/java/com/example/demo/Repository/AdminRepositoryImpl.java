@@ -101,4 +101,23 @@ public class AdminRepositoryImpl implements AdminRepository {
 		return val>0;
 	}
 
+	@Override
+	public boolean addMovie(MovieModel movie) {
+		String sql = "INSERT INTO movies (title, release_year, description, image_url, duration,director_name, actor_name, actress_name) VALUES (?, ?, ?, ?, ?,?,?,?)";
+		
+		int val=jdbcTemplate.update(sql,movie.getMovieName(),movie.getYear(),movie.getDescription(),movie.getImageUrl(),movie.getDuration(),movie.getDirector(),movie.getActor(),movie.getActress());
+		
+		// Retrieve the last inserted movie_id
+        Integer movieId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+        
+        if (movieId != null) {
+        	sql="INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)";
+        	jdbcTemplate.update(sql, movieId, movie.getGenreid());
+        	
+        	sql="INSERT INTO  movie_languages (movie_id, genre_id) VALUES (?, ?)";
+        	jdbcTemplate.update(sql,movie.getLangaugeid());
+        }
+		return val>0;
+	}
+
 }
