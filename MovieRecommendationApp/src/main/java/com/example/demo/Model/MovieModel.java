@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MovieModel{
 	
+	private int movieId;
 	private String movieName;
 	private String year;
 	private String duration;
@@ -21,6 +22,6 @@ public class MovieModel{
 	private String actress;
 	private String description;
 	private int genreid;
-	private int langaugeid;
+	private int languageid;
 	
 }

@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,18 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public boolean addMovie(MovieModel movie) {
 		return adminRepo.addMovie(movie);
+	}
+	@Override
+	public List<Map<String,Object>> getAllMovie() {
+		return adminRepo.getAllMovie();
+	}
+	@Override
+	public boolean isDeleteMovie(int id) {
+		return adminRepo.isDeleteMovie(id);
+	}
+	@Override
+	public boolean isUpdateMovie(MovieModel movie) {
+		return adminRepo.isUpdateMovie(movie);
 	}
 
 }

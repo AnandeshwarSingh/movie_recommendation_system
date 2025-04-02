@@ -28,5 +28,7 @@ public interface AdminRepository {
 	
 	//CRUD Operation for Movie
 	public boolean addMovie(MovieModel movie);
-	
+	public List<Map<String, Object>> getAllMovie();
+	public boolean isDeleteMovie(int id);
+	public boolean isUpdateMovie(MovieModel movie);
 }
