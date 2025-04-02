@@ -56,5 +56,9 @@ public class AdminServiceImpl implements AdminService{
 	public boolean isDeleteLanguage(int id) {
 		return adminRepo.isDeleteLanguage(id);
 	}
+	@Override
+	public boolean addMovie(MovieModel movie) {
+		return adminRepo.addMovie(movie);
+	}
 
 }
