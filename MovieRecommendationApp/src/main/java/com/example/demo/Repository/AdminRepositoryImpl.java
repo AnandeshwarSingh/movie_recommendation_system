@@ -73,7 +73,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 	// View Language
 	@Override
 	public List<LanguageModel> getAllLanguages() {
-		  String sql = "SELECT * FROM language";
+		  String sql = "SELECT * FROM language order by language_id asc";
 		  List<LanguageModel> list=jdbcTemplate.query(sql, new RowMapper<LanguageModel>() {
 	            @Override
 	            public LanguageModel mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -22,6 +22,8 @@ import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Service.AdminServiceImpl;
 
+import lombok.ToString;
+
 @RestController
 @CrossOrigin("http://localhost:5173")
 @RequestMapping("/admin")
