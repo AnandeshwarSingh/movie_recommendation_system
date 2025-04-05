@@ -1,7 +1,6 @@
 package com.example.demo.Service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
@@ -28,7 +27,4 @@ public interface AdminService {
 	
 	//CRUD Operation For Movie
 	public boolean addMovie(MovieModel movie);
-	public List<Map<String,Object>> getAllMovie();
-	public boolean isDeleteMovie(int id);
-	public boolean isUpdateMovie(MovieModel movie);
 }
