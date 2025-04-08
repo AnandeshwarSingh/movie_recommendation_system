@@ -1,8 +1,10 @@
 package com.example.demo.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -106,5 +108,43 @@ public class AdminController {
 		}
 	}
 	
+	//ADD Movie
+	@PostMapping("/addMovie")
+	public String addMovie(@RequestBody MovieModel movie) {
+		return (adminService.addMovie(movie))?"Genre Added Successfully":"OOPs Failed to Add";
+	}
+	
+	//View All Movie
+	@GetMapping("/viewAllMovie")
+	public List<Map<String,Object>> getAllMovie(){
+		List<Map<String,Object>> mlist=adminService.getAllMovie();
+		if(mlist.isEmpty()) {
+			throw new GenreNotFoundException("There is no data in the database");
+		}
+			return mlist;	
+	}
+	
+	//Delete Movie
+	@DeleteMapping("/deleteMovie/{id}")
+    public ResponseEntity<String> deleteMovie(@PathVariable("id") int movieId) {
+        boolean deleted = adminService.isDeleteMovie(movieId);
+
+        if (deleted) {
+            return ResponseEntity.ok("Movie deleted successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Movie not found with ID: " + movieId);
+        }
+    }
+	
+	//Update Movie
+	@PutMapping("/update")
+    public ResponseEntity<String> updateMovie(@RequestBody MovieModel movie) {
+        boolean updated = adminService.isUpdateMovie(movie);
+        if (updated) {
+            return ResponseEntity.ok("Movie updated successfully!");
+        }
+        return ResponseEntity.badRequest().body("Failed to update movie!");
+    }
 	
 }

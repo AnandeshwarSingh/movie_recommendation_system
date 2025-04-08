@@ -40,7 +40,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 
 	@Override
 	public List<GenreModel> getAllGenre() {
-		String sql="select * from genres";
+		String sql="select * from genres order by genre_id asc";
 		List<GenreModel> list=jdbcTemplate.query(sql,(ResultSet rs, int rowNum)->{
 				return new GenreModel(rs.getInt(1),rs.getString(2));
 		});
@@ -110,4 +110,61 @@ public class AdminRepositoryImpl implements AdminRepository {
 		return val>0;
 	}
 
+	//ADD Movie
+	@Override
+	public boolean addMovie(MovieModel movie) {
+		 String sql = "INSERT INTO movies (title, release_year, description, image_url, duration, director_name, actor_name, actress_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+		    // Insert movie details
+		    int val = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), movie.getImageUrl(), movie.getDuration(), movie.getDirector(), movie.getActor(), movie.getActress());
+
+		    // Retrieve the last inserted movie_id
+		    Integer movieId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+
+		    if (val > 0 && movieId != null) {
+		        // Insert movie-genre relation
+		        jdbcTemplate.update("INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)", movieId, movie.getGenreid());
+		        // Insert movie-language relation
+		        jdbcTemplate.update("INSERT INTO movie_languages (movie_id, language_id) VALUES (?, ?)", movieId, movie.getLanguageid());
+		        return true;
+		    }
+		    return false;
+	}
+
+	//View All Movie
+	@Override
+	public List<Map<String,Object>> getAllMovie() {
+		String sql="SELECT m.movie_id, m.title, m.release_year, m.description, m.image_url, m.duration,m.director_name, m.actor_name, m.actress_name,GROUP_CONCAT(DISTINCT g.name) AS genres,GROUP_CONCAT(DISTINCT l.language_name) AS language FROM movies m  LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id LEFT JOIN language l ON ml.language_id = l.language_id GROUP BY m.movie_id order by m.movie_id asc;";
+		
+		return jdbcTemplate.queryForList(sql);
+	}
+
+	//Delete Movie
+	@Override
+	public boolean isDeleteMovie(int id) {
+		String deletemovieSql = "DELETE FROM movies WHERE movie_id = ?";
+        int val=jdbcTemplate.update(deletemovieSql, id);
+		return val>0;
+	}
+
+	//Update Movie
+	@Override
+	public boolean isUpdateMovie(MovieModel movie) {
+		String sql = "UPDATE movies SET title=?, release_year=?, description=?, image_url=?, duration=?,       director_name=?, actor_name=?, actress_name=? WHERE movie_id=?";
+		
+		int updatedRows = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), 
+	                movie.getImageUrl(), movie.getDuration(), movie.getDirector(), movie.getActor(), 
+	                movie.getActress(), movie.getMovieId());
+		if(updatedRows>0) {
+			 jdbcTemplate.update("DELETE FROM movie_genres WHERE movie_id=?", movie.getMovieId());
+			 jdbcTemplate.update("INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)", movie.getMovieId(), movie.getGenreid());
+			 
+			 jdbcTemplate.update("DELETE FROM movie_languages WHERE movie_id=?", movie.getMovieId());
+			 jdbcTemplate.update("INSERT INTO movie_languages (movie_id, language_id) VALUES (?, ?)", movie.getMovieId(), movie.getLanguageid());
+			 
+			 return true;
+		}
+		return false;
+	}
+		
 }

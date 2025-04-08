@@ -1,6 +1,7 @@
 package com.example.demo.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
@@ -24,4 +25,10 @@ public interface AdminService {
 //	public LanguageModel getLanguageById(int id);
 	public boolean isUpdateLanguage(LanguageModel language);
 	public boolean isDeleteLanguage(int id); 
+	
+	//CRUD Operation For Movie
+	public boolean addMovie(MovieModel movie);
+	public List<Map<String,Object>> getAllMovie();
+	public boolean isDeleteMovie(int id);
+	public boolean isUpdateMovie(MovieModel movie);
 }
