@@ -31,7 +31,7 @@ public class UserController {
         return userService.addUser(user) ? "User added successfully!" : "Failed to add user!";
     }
     
- // Read (Get all users)
+    // Read (Get all users)
     @GetMapping("/viewAllUser")
     public List<UserModel> getAllUsers() {
         List<UserModel>list= userService.getAllUsers();
@@ -42,13 +42,10 @@ public class UserController {
         	return list;
         }
     }
-
-	/*
-	 * Read (Get user by ID)
-	 * 
-	 * @GetMapping("/{id}") public UserModel getUserById(@PathVariable int id) {
-	 * return userRepository.getUserById(id); }
-	 */
+	 
+     //Read (Get user by ID) 
+	 @GetMapping("/searchUserById/{id}") public UserModel getUserById(@PathVariable int id) {
+	 	return userService.getUserById(id); }
 
     // Update (Modify user details)
     @PutMapping("/update")
