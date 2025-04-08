@@ -15,12 +15,12 @@ public class MovieModel{
 	private String movieName;
 	private String year;
 	private String duration;
-	private String language;
 	private String imageUrl;
 	private String director;
 	private String actor;
 	private String actress;
 	private String description;
+	private String imageName;
 	private int genreid;
 	private int languageid;
 	

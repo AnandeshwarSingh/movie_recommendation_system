@@ -19,7 +19,6 @@ public class AdminServiceImpl implements AdminService{
 	
 	@Override
 	public boolean authenticateAdmin(String username, String password) {
-		// TODO Auto-generated method stub
 		return adminRepo.validateAdmin(username, password);
 	}
 	@Override
@@ -30,6 +29,11 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public List<GenreModel> getAllGenre() {
 		return adminRepo.getAllGenre();
+	}
+	
+	@Override
+	public GenreModel getGenreById(int id) {
+		return adminRepo.getGenreById(id);
 	}
 
 	@Override
@@ -48,6 +52,11 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public List<LanguageModel> getAllLanguages() {
 		return adminRepo.getAllLanguages();
+	}
+	
+	@Override
+	public LanguageModel getLanguageById(int id) {
+		return adminRepo.getLanguageById(id);
 	}
 	@Override
 	public boolean isUpdateLanguage(LanguageModel language) {
@@ -72,6 +81,11 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public boolean isUpdateMovie(MovieModel movie) {
 		return adminRepo.isUpdateMovie(movie);
+	}
+	
+	@Override
+	public Map<String, Object> getMovieById(int id) {
+		return adminRepo.getMovieById(id);
 	}
 
 }

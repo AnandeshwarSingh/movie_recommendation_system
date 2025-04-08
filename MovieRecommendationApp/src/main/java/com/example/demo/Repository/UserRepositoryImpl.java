@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.GenreModel;
+import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.UserModel;
 
 @Repository("userRepo")
@@ -38,8 +39,15 @@ public class UserRepositoryImpl implements UserRepository{
 	//Search User
 	@Override
 	public UserModel getUserById(int id) {
-		
-		return null;
+		String sql = "SELECT * FROM users WHERE user_id = ?";
+		List<UserModel>list=jdbcTemplate.query(sql,new RowMapper<UserModel>() {
+			@Override
+			public UserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+				UserModel user=new UserModel(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5));
+				return user;
+			}
+		},id);
+		return list.size()>0?list.get(0):null;
 	}
 
 	//Update User

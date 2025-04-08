@@ -1,5 +1,11 @@
 package com.example.demo.Controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 
@@ -14,8 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.CustomException.GenreNotFoundException;
 import com.example.demo.Model.AdminModel;
@@ -56,6 +63,17 @@ public class AdminController {
 			return mlist;	
 	}
 	
+	@GetMapping("/searchGenreById/{id}")
+	public GenreModel searchGenreById(@PathVariable("id") Integer id) {
+		GenreModel genre=adminService.getGenreById(id);
+		if(genre!=null)
+			return genre;
+		else
+		{
+			throw new GenreNotFoundException("Genre not found using "+id);
+		}	
+	}
+	
 	@DeleteMapping("/deleteGenreById/{gid}")
 	public String deleteGenreById(@PathVariable("gid") Integer id) {
 		if(adminService.isDeleteGenre(id))
@@ -88,6 +106,17 @@ public class AdminController {
 			return list;	
 	}
 	
+	@GetMapping("/searchLanguageById/{id}")
+	public LanguageModel searchLanguageById(@PathVariable("id") Integer id) {
+		LanguageModel lmodel=adminService.getLanguageById(id);
+		if(lmodel!=null)
+			return lmodel;
+		else
+		{
+			throw new GenreNotFoundException("Language not found using "+id);
+		}	
+	}
+	
 	@DeleteMapping("/deleteLanguageById/{lid}")
 	public String deleteLanguageById(@PathVariable("lid") Integer id) {
 		if(adminService.isDeleteLanguage(id))
@@ -112,6 +141,34 @@ public class AdminController {
 		return (adminService.addMovie(movie))?"Genre Added Successfully":"OOPs Failed to Add";
 	}
 	
+	//ADD IMAGE
+	 private static final String IMAGE_DIR = "uploaded-images/";
+
+	    @PostMapping("/upload")
+	    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+	        try {
+	            // Create directory if not exists
+	            File directory = new File(IMAGE_DIR);
+	            if (!directory.exists()) {
+	                directory.mkdirs();
+	            }
+
+	            String fileName = file.getOriginalFilename();
+	            Path path = Paths.get(IMAGE_DIR + fileName);
+	            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+	            // Return the URL to access the image
+	            String fileUrl = "/images/" + fileName;
+	            System.out.println("=============> Image name :"+fileUrl);
+	            return ResponseEntity.ok(fileUrl);
+
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body("Failed to upload image");
+	        }
+	    }
+	    
 	//View All Movie
 	@GetMapping("/viewAllMovie")
 	public List<Map<String,Object>> getAllMovie(){
@@ -122,6 +179,11 @@ public class AdminController {
 			return mlist;	
 	}
 	
+	@GetMapping("/searchMovieById/{movieId}")
+    public Map<String, Object> getMovieById(@PathVariable Integer movieId) {
+        return adminService.getMovieById(movieId);
+    }
+
 	//Delete Movie
 	@DeleteMapping("/deleteMovie/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable("id") int movieId) {
