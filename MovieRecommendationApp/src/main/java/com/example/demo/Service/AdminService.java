@@ -16,19 +16,21 @@ public interface AdminService {
 	//CRUD Operation of Genre
 	public boolean isAddGenre(GenreModel genre);
 	public List<GenreModel> getAllGenre();
+	public GenreModel getGenreById(int id);
 	public boolean isDeleteGenre(int id);
 	public boolean isUpdateGenre(GenreModel genre);
 	
 	//CRUD Operation of Language
 	public boolean addLanguage(LanguageModel language);
 	public List<LanguageModel> getAllLanguages();
-//	public LanguageModel getLanguageById(int id);
+	public LanguageModel getLanguageById(int id);
 	public boolean isUpdateLanguage(LanguageModel language);
 	public boolean isDeleteLanguage(int id); 
 	
 	//CRUD Operation For Movie
 	public boolean addMovie(MovieModel movie);
 	public List<Map<String,Object>> getAllMovie();
+	public Map<String, Object> getMovieById(int id);
 	public boolean isDeleteMovie(int id);
 	public boolean isUpdateMovie(MovieModel movie);
 }

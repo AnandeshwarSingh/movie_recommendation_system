@@ -16,6 +16,7 @@ public interface AdminRepository {
 	//CRUD Operation for Genre
 	public boolean isAddGenre(GenreModel genre);
 	public List<GenreModel> getAllGenre();
+	public GenreModel getGenreById(int id);
 	public boolean isDeleteGenre(int id);
 	public boolean isUpdateGenre(GenreModel genre);
 	
@@ -29,6 +30,7 @@ public interface AdminRepository {
 	//CRUD Operation for Movie
 	public boolean addMovie(MovieModel movie);
 	public List<Map<String, Object>> getAllMovie();
+	public Map<String, Object> getMovieById(int id);
 	public boolean isDeleteMovie(int id);
 	public boolean isUpdateMovie(MovieModel movie);
 }
