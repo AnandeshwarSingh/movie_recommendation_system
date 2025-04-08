@@ -1,5 +1,9 @@
 package com.example.demo.Repository;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -171,8 +175,25 @@ public class AdminRepositoryImpl implements AdminRepository {
 	//Delete Movie
 	@Override
 	public boolean isDeleteMovie(int id) {
-		String deletemovieSql = "DELETE FROM movies WHERE movie_id = ?";
+		 // 1. Fetch image name from database
+	    String fetchImageSql = "SELECT image_name FROM movies WHERE movie_id = ?";
+	    String imageName = jdbcTemplate.queryForObject(fetchImageSql, String.class, id);
+	    
+	    String deletemovieSql = "DELETE FROM movies WHERE movie_id = ?";
         int val=jdbcTemplate.update(deletemovieSql, id);
+        
+	    // 2. Delete image file from filesystem
+	    if (val>0 && imageName != null && !imageName.isEmpty()) {
+	    	try {
+	            // Use relative path to project root
+	            Path imagePath = Paths.get("uploaded-images", imageName);
+	            Files.deleteIfExists(imagePath);
+	            System.out.println("Deleted image: " + imagePath.toAbsolutePath());
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            System.out.println("Image deletion failed.");
+	        }
+	    }
 		return val>0;
 	}
 
