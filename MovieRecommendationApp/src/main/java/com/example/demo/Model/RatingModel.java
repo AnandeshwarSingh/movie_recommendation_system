@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RatingModel{
-	private int rate_id;
+	private int rateId;
+	private int userId;
+	private int movieId;
 	private Float rating;
 	private String review;
 }

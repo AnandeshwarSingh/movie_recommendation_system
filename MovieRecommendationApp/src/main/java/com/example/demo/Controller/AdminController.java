@@ -200,13 +200,23 @@ public class AdminController {
     }
 	
 	//Update Movie
-	@PutMapping("/update")
+	@PutMapping("/updateMovie")
     public ResponseEntity<String> updateMovie(@RequestBody MovieModel movie) {
         boolean updated = adminService.isUpdateMovie(movie);
         if (updated) {
             return ResponseEntity.ok("Movie updated successfully!");
         }
         return ResponseEntity.badRequest().body("Failed to update movie!");
+    }
+	
+	@GetMapping("/getAllMovieByGenre/{genreId}")
+    public List<Map<String,Object>> getAllMovieByGenre(@PathVariable Integer genreId) {
+        return adminService.getAllMovieByGenre(genreId);
+    }
+	
+	@GetMapping("/getAllMovieByLanguage/{languageId}")
+    public List<Map<String,Object>> getAllMovieByLanguage(@PathVariable Integer languageId) {
+        return adminService.getAllMovieByLanguage(languageId);
     }
 	
 }
