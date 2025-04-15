@@ -33,4 +33,7 @@ public interface AdminService {
 	public Map<String, Object> getMovieById(int id);
 	public boolean isDeleteMovie(int id);
 	public boolean isUpdateMovie(MovieModel movie);
+	
+	public List<Map<String, Object>> getAllMovieByGenre(int gid);
+	public List<Map<String, Object>> getAllMovieByLanguage(int lid);
 }

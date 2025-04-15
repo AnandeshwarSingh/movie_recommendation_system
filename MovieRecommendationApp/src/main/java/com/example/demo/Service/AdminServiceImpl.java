@@ -87,5 +87,13 @@ public class AdminServiceImpl implements AdminService{
 	public Map<String, Object> getMovieById(int id) {
 		return adminRepo.getMovieById(id);
 	}
+	@Override
+	public List<Map<String, Object>> getAllMovieByGenre(int gid) {
+		return adminRepo.getAllMovieByGenre(gid);
+	}
+	@Override
+	public List<Map<String, Object>> getAllMovieByLanguage(int lid) {
+		return adminRepo.getAllMovieByLanguage(lid);
+	}
 
 }

@@ -220,7 +220,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 	@Override
 	public Map<String, Object> getMovieById(int id) {
 		String sql = "SELECT m.movie_id, m.title, m.release_year, m.description, m.duration, " +
-                "m.director_name, m.actor_name, m.actress_name,m.created_at, " +
+                "m.director_name, m.actor_name, m.actress_name,m.image_name ,m.created_at, " +
                 "GROUP_CONCAT(DISTINCT g.name) AS genres, " +
                 "GROUP_CONCAT(DISTINCT l.language_name) AS language " +
                 "FROM movies m " +
@@ -233,5 +233,19 @@ public class AdminRepositoryImpl implements AdminRepository {
 
    return jdbcTemplate.queryForMap(sql, id);
 	}
+
+	@Override
+	public List<Map<String, Object>> getAllMovieByGenre(int gid) {
+		String sql="SELECT m.movie_id, m.title, m.release_year, m.description, m.duration,m.director_name, m.actor_name, m.actress_name,m.image_name, l.language_name, g.name AS genre_name FROM movies m JOIN movie_genres mg ON m.movie_id = mg.movie_id JOIN genres g ON mg.genre_id = g.genre_id JOIN  movie_languages ml ON m.movie_id = ml.movie_id JOIN  language l ON ml.language_id = l.language_id WHERE g.genre_id = ?;";
+				
+		return jdbcTemplate.queryForList(sql, gid);
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllMovieByLanguage(int lid) {
+		String sql=" SELECT m.movie_id, m.title, m.release_year, m.description, m.duration,m.director_name, m.actor_name, m.actress_name,m.image_name, l.language_name, g.name AS genre_name FROM movies m JOIN movie_genres mg ON m.movie_id = mg.movie_id JOIN genres g ON mg.genre_id = g.genre_id JOIN  movie_languages ml ON m.movie_id = ml.movie_id JOIN  language l ON ml.language_id = l.language_id WHERE l.language_id = ?;";
+		return jdbcTemplate.queryForList(sql,lid);
+	}
 		
+	
 }
