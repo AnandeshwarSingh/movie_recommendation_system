@@ -20,6 +20,7 @@ import com.example.demo.Model.AdminModel;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
+import com.example.demo.Model.RatingModel;
 import com.example.demo.Model.UserModel;
 
 @Repository("adminRepo")
@@ -200,11 +201,11 @@ public class AdminRepositoryImpl implements AdminRepository {
 	//Update Movie
 	@Override
 	public boolean isUpdateMovie(MovieModel movie) {
-		String sql = "UPDATE movies SET title=?, release_year=?, description=?, duration=?,director_name=?, actor_name=?, actress_name=? WHERE movie_id=?";
+		String sql = "UPDATE movies SET title=?, release_year=?, description=?, duration=?,director_name=?, actor_name=?, actress_name=?,image_name=? WHERE movie_id=?";
 		
 		int updatedRows = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), 
 				    movie.getDuration(), movie.getDirector(), movie.getActor(), 
-	                movie.getActress(), movie.getMovieId());
+	                movie.getActress(),  movie.getImageName(),movie.getMovieId());
 		if(updatedRows>0) {
 			 jdbcTemplate.update("DELETE FROM movie_genres WHERE movie_id=?", movie.getMovieId());
 			 jdbcTemplate.update("INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)", movie.getMovieId(), movie.getGenreid());
@@ -246,6 +247,37 @@ public class AdminRepositoryImpl implements AdminRepository {
 		String sql=" SELECT m.movie_id, m.title, m.release_year, m.description, m.duration,m.director_name, m.actor_name, m.actress_name,m.image_name, l.language_name, g.name AS genre_name FROM movies m JOIN movie_genres mg ON m.movie_id = mg.movie_id JOIN genres g ON mg.genre_id = g.genre_id JOIN  movie_languages ml ON m.movie_id = ml.movie_id JOIN  language l ON ml.language_id = l.language_id WHERE l.language_id = ?;";
 		return jdbcTemplate.queryForList(sql,lid);
 	}
-		
+
+	@Override
+	public boolean addRating(RatingModel rating) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<Map<String, Object>> getAllRating() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getRatingById(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isDeleteRating(int id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isUpdateRating(MovieModel movie) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	
 	
 }

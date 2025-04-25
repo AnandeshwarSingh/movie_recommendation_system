@@ -66,4 +66,18 @@ public class UserRepositoryImpl implements UserRepository{
 	        return result > 0;
 	}
 
+	 public UserModel findByEmailAndPassword(String email, String password) {
+	        String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+	        try {
+	            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new UserModel(
+	                    rs.getInt("user_id"),
+	                    rs.getString("name"),
+	                    rs.getString("email"),
+	                    rs.getString("phone_number"),
+	                    rs.getString("password")       
+	            ), email, password);
+	        } catch (Exception e) {
+	            return null;
+	        }
+	    }
 }

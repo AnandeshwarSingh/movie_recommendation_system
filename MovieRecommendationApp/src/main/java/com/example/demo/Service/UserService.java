@@ -11,4 +11,6 @@ public interface UserService {
     public UserModel getUserById(int id);
     public boolean updateUser(UserModel user);
     public boolean deleteUser(int id);
+    
+    public UserModel findByEmailAndPassword(String email, String password);
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
+import com.example.demo.Model.RatingModel;
 import com.example.demo.Model.UserModel;
 
 public interface AdminRepository {
@@ -19,7 +20,7 @@ public interface AdminRepository {
 	public GenreModel getGenreById(int id);
 	public boolean isDeleteGenre(int id);
 	public boolean isUpdateGenre(GenreModel genre);
-	
+	 
 	//CRUD Operation for Language
 	public boolean addLanguage(LanguageModel language);
 	public List<LanguageModel> getAllLanguages();
@@ -36,4 +37,11 @@ public interface AdminRepository {
 	
 	public List<Map<String, Object>> getAllMovieByGenre(int gid);
 	public List<Map<String, Object>> getAllMovieByLanguage(int lid);
+	
+	//CRUD Operation for Rating
+	public boolean addRating(RatingModel rating);
+	public List<Map<String, Object>> getAllRating();
+	public Map<String, Object> getRatingById(int id);
+	public boolean isDeleteRating(int id);
+	public boolean isUpdateRating(MovieModel movie);
 }
