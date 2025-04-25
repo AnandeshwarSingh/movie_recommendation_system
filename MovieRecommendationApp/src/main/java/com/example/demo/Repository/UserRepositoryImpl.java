@@ -22,6 +22,7 @@ public class UserRepositoryImpl implements UserRepository{
 	//ADD User
 	@Override
 	public boolean addUser(UserModel user) {
+		System.out.println(user);
 		String sql = "INSERT INTO users (name, email, phone_number, password) VALUES (?, ?, ?, ?)";
         int result = jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPhoneNumber(), user.getPassword());
         return result > 0;
