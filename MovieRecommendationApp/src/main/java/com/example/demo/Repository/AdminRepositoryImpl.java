@@ -272,4 +272,24 @@ public class AdminRepositoryImpl implements AdminRepository {
 	    return stats;
 	}
 	
+	public List<Map<String,Object>> getTopMovies(){
+		String sql="SELECT m.movie_id,m.title,ROUND(AVG(r.rating), 1) AS average_rating,GROUP_CONCAT(g.genre_name) AS genres FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title ORDER BY average_rating DESC LIMIT 5;";
+		return jdbcTemplate.queryForList(sql);
+	}
+	
+	public List<Map<String,Object>> getLatestMovies(){
+		String sql="SELECT m.movie_id,m.title,GROUP_CONCAT(g.name) AS genre,ROUND(AVG(r.rating), 1) AS rating FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title,m.created_at ORDER BY m.created_at DESC LIMIT 5;";
+		
+		return jdbcTemplate.queryForList(sql);
+	}
+	
+	public List<Map<String,Object>> getLatestUsers(){
+		String sql="SELECT user_id,name,email,phone_number FROM users ORDER BY created_at DESC LIMIT 5;";
+		return jdbcTemplate.queryForList(sql);
+	}
+	
+	public List<Map<String,Object>> getLatestRating(){
+		String sql="SELECT m.movie_id,m.title,GROUP_CONCAT(g.name) AS genre,ROUND(AVG(r.rating), 1) AS rating FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title, r.created_at ORDER BY r.created_at DESC LIMIT 5;";
+		return jdbcTemplate.queryForList(sql);
+	}
 }

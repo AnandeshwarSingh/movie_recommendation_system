@@ -240,4 +240,24 @@ public class AdminController {
 	public DashboardStats getDashboardStats() {
 	        return adminService.getDashboardStats();
 	}
+	
+	@GetMapping("/getTopMovies")
+	public List<Map<String,Object>> getTopMovies(){
+		return adminService.getTopMovies();
+	}
+	
+	@GetMapping("/getLatestMovies")
+	public List<Map<String,Object>> getLatestMovies(){
+		return adminService.getLatestMovies();
+	};
+	
+	@GetMapping("/getLatestUsers")
+	public List<Map<String,Object>> getLatestUsers(){
+		return adminService.getLatestUsers();
+	};
+	
+	@GetMapping("/getLatestRating")
+	public List<Map<String,Object>> getLatestRating(){
+		return adminService.getLatestRating();
+	}
 }
