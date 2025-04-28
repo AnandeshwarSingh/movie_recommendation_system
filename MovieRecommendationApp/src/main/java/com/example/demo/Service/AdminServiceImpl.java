@@ -113,5 +113,21 @@ public class AdminServiceImpl implements AdminService{
 	public Map<String, Object> getRatingById(int id) {
 		return adminRepo.getRatingById(id);
 	}
+	@Override
+	public List<Map<String, Object>> getTopMovies() {
+		return adminRepo.getTopMovies();
+	}
+	@Override
+	public List<Map<String, Object>> getLatestMovies() {
+		return adminRepo.getLatestMovies();
+	}
+	@Override
+	public List<Map<String, Object>> getLatestUsers() {
+		return adminRepo.getLatestUsers();
+	}
+	@Override
+	public List<Map<String, Object>> getLatestRating() {
+		return adminRepo.getLatestRating();
+	}
 
 }

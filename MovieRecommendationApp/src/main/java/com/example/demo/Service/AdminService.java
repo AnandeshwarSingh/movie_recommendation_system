@@ -44,4 +44,8 @@ public interface AdminService {
 	public Map<String, Object> getRatingById(int id);
 	
 	public DashboardStats getDashboardStats();
+	public List<Map<String,Object>> getTopMovies();
+	public List<Map<String,Object>> getLatestMovies();
+	public List<Map<String,Object>> getLatestUsers();
+	public List<Map<String,Object>> getLatestRating();
 }
