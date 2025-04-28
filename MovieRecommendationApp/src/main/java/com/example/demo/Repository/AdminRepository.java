@@ -3,6 +3,7 @@ package com.example.demo.Repository;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
@@ -42,6 +43,7 @@ public interface AdminRepository {
 	public boolean addRating(RatingModel rating);
 	public List<Map<String, Object>> getAllRating();
 	public Map<String, Object> getRatingById(int id);
-	public boolean isDeleteRating(int id);
-	public boolean isUpdateRating(MovieModel movie);
+	
+	//DashBoardStats
+	public DashboardStats getDashboardStats();
 }
