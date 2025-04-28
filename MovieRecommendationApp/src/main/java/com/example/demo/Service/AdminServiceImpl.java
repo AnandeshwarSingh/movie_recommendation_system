@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
+import com.example.demo.Model.RatingModel;
 import com.example.demo.Repository.AdminRepositoryImpl;
 
 @Service("adminService")
@@ -94,6 +96,22 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public List<Map<String, Object>> getAllMovieByLanguage(int lid) {
 		return adminRepo.getAllMovieByLanguage(lid);
+	}
+	@Override
+	public DashboardStats getDashboardStats() {
+		return adminRepo.getDashboardStats();
+	}
+	@Override
+	public boolean addRating(RatingModel rating) {
+		return adminRepo.addRating(rating);
+	}
+	@Override
+	public List<Map<String, Object>> getAllRating() {
+		return adminRepo.getAllRating();
+	}
+	@Override
+	public Map<String, Object> getRatingById(int id) {
+		return adminRepo.getRatingById(id);
 	}
 
 }

@@ -4,7 +4,13 @@ import com.example.demo.Model.LoginRequest;
 import com.example.demo.Model.UserModel;
 import com.example.demo.Service.UserService;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,9 +41,18 @@ public class LoginController {
         return "Logged out successfully";
     }
 
-    @GetMapping("/current-user")
-    public Object getCurrentUser(HttpSession session) {
-        Object user = session.getAttribute("user");
-        return user != null ? user : "No user logged in";
+    @GetMapping("/currentUser")
+    public ResponseEntity<Map<String, Object>> getCurrentUser(HttpSession session) {
+        UserModel user = (UserModel) session.getAttribute("user");
+        if (user != null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("userId", user.getUserId());
+            response.put("username", user.getName()); // or getName() depending on your UserModel
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
+
+
 }

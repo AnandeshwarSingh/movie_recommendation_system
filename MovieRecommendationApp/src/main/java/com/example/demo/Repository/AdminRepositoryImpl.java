@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
@@ -147,10 +148,10 @@ public class AdminRepositoryImpl implements AdminRepository {
 	//ADD Movie
 	@Override
 	public boolean addMovie(MovieModel movie) {
-		 String sql = "INSERT INTO movies (title, release_year, description, duration, director_name, actor_name, actress_name, image_name) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
+		 String sql = "INSERT INTO movies (title, release_year, description, duration, director_name, actor_name, actress_name, image_name,URL) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
 
 		    // Insert movie details
-		    int val = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), movie.getDuration(), movie.getDirector(), movie.getActor(), movie.getActress(), movie.getImageName());
+		    int val = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), movie.getDuration(), movie.getDirector(), movie.getActor(), movie.getActress(), movie.getImageName(),movie.getUrl());
 
 		    // Retrieve the last inserted movie_id
 		    Integer movieId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
@@ -168,7 +169,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 	//View All Movie
 	@Override
 	public List<Map<String,Object>> getAllMovie() {
-		String sql="SELECT m.movie_id, m.title, m.release_year, m.description,m.duration,m.director_name, m.actor_name, m.actress_name,m.image_name ,GROUP_CONCAT(DISTINCT g.name) AS genres,GROUP_CONCAT(DISTINCT l.language_name) AS language FROM movies m  LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id LEFT JOIN language l ON ml.language_id = l.language_id GROUP BY m.movie_id order by m.movie_id asc;";
+		String sql="SELECT m.movie_id, m.title, m.release_year, m.description,m.duration,m.director_name, m.actor_name, m.actress_name,m.image_name ,m.url,GROUP_CONCAT(DISTINCT g.name) AS genres,GROUP_CONCAT(DISTINCT l.language_name) AS language,ROUND(AVG(r.rating), 1) AS rating FROM movies m  LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id LEFT JOIN language l ON ml.language_id = l.language_id LEFT JOIN ratings r ON m.movie_id = r.movie_id GROUP BY m.movie_id order by m.movie_id asc;";
 		
 		return jdbcTemplate.queryForList(sql);
 	}
@@ -220,17 +221,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 
 	@Override
 	public Map<String, Object> getMovieById(int id) {
-		String sql = "SELECT m.movie_id, m.title, m.release_year, m.description, m.duration, " +
-                "m.director_name, m.actor_name, m.actress_name,m.image_name ,m.created_at, " +
-                "GROUP_CONCAT(DISTINCT g.name) AS genres, " +
-                "GROUP_CONCAT(DISTINCT l.language_name) AS language " +
-                "FROM movies m " +
-                "LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id " +
-                "LEFT JOIN genres g ON mg.genre_id = g.genre_id " +
-                "LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id " +
-                "LEFT JOIN language l ON ml.language_id = l.language_id " +
-                "WHERE m.movie_id = ? " +
-                "GROUP BY m.movie_id";
+		String sql = "SELECT m.movie_id,m.title,m.release_year,m.description,   m.duration,m.director_name,m.actor_name,m.actress_name,m.image_name,m.url,DATE(m.created_at) AS created_date,GROUP_CONCAT(DISTINCT g.name) AS genres, GROUP_CONCAT(DISTINCT l.language_name) AS language, ROUND(AVG(r.rating), 1) AS rating FROM movies m LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id LEFT JOIN language l ON ml.language_id = l.language_id LEFT JOIN  ratings r ON m.movie_id = r.movie_id WHERE m.movie_id = ? GROUP BY m.movie_id;";
 
    return jdbcTemplate.queryForMap(sql, id);
 	}
@@ -250,34 +241,35 @@ public class AdminRepositoryImpl implements AdminRepository {
 
 	@Override
 	public boolean addRating(RatingModel rating) {
-		// TODO Auto-generated method stub
-		return false;
+		String sql = "INSERT INTO ratings (user_id, movie_id, rating, review) VALUES (?, ?, ?, ?)";
+		int val=jdbcTemplate.update(sql, rating.getUserId(), rating.getMovieId(), rating.getRating(), rating.getReview());
+		
+        return val>0;
 	}
 
 	@Override
 	public List<Map<String, Object>> getAllRating() {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = " SELECT  r.rating_id,m.title,g.name AS genre_name, r.rating,r.review,DATE(r.created_at) AS created_date FROM ratings r JOIN movies m ON r.movie_id = m.movie_id JOIN movie_genres mg ON m.movie_id = mg.movie_id JOIN genres g ON mg.genre_id = g.genre_id order by r.rating_id asc";
+		return jdbcTemplate.queryForList(sql);
 	}
 
 	@Override
 	public Map<String, Object> getRatingById(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		String sql = "SELECT * FROM ratings WHERE rating_id = ?";
+		return jdbcTemplate.queryForMap(sql, id);
 	}
 
 	@Override
-	public boolean isDeleteRating(int id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public DashboardStats getDashboardStats() {
+		DashboardStats stats = new DashboardStats();
+		
+		stats.setTotalMovies(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM movies", Integer.class));
+	    stats.setTotalLanguages(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM language", Integer.class));
+	    stats.setTotalGenres(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM genres", Integer.class));
+	    stats.setTotalUsers(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class));
+	    stats.setTotalReviews(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM ratings", Integer.class));
 
-	@Override
-	public boolean isUpdateRating(MovieModel movie) {
-		// TODO Auto-generated method stub
-		return false;
+	    return stats;
 	}
-	
-	
 	
 }

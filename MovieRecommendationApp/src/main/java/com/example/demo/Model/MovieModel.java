@@ -15,7 +15,6 @@ public class MovieModel{
 	private String movieName;
 	private String year;
 	private String duration;
-	private String imageUrl;
 	private String director;
 	private String actor;
 	private String actress;
@@ -23,5 +22,5 @@ public class MovieModel{
 	private String imageName;
 	private int genreid;
 	private int languageid;
-	
+	private String url;
 }

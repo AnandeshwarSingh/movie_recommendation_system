@@ -26,9 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.CustomException.GenreNotFoundException;
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
+import com.example.demo.Model.RatingModel;
 import com.example.demo.Service.AdminServiceImpl;
 
 import lombok.ToString;
@@ -140,7 +142,7 @@ public class AdminController {
 	//ADD Movie
 	@PostMapping("/addMovie")
 	public String addMovie(@RequestBody MovieModel movie) {
-		return (adminService.addMovie(movie))?"Genre Added Successfully":"OOPs Failed to Add";
+		return (adminService.addMovie(movie))?"Movie Added Successfully":"OOPs Failed to Add";
 	}
 	
 	//ADD IMAGE
@@ -219,4 +221,23 @@ public class AdminController {
         return adminService.getAllMovieByLanguage(languageId);
     }
 	
+	@GetMapping("/getRating")
+    public List<Map<String, Object>> getAllRatings() {
+        return adminService.getAllRating();
+    }
+
+    @GetMapping("/searchByRatingId/{id}")
+    public Map<String,Object> getRatingById(@PathVariable int id) {
+        return adminService.getRatingById(id);
+    }
+
+    @PostMapping("/addRating")
+    public String addRating(@RequestBody RatingModel rating) {
+   
+        return (adminService.addRating(rating))?"Rating Added Successfully":"OOPs Failed to Add";
+    }
+	@GetMapping("/stats")
+	public DashboardStats getDashboardStats() {
+	        return adminService.getDashboardStats();
+	}
 }
