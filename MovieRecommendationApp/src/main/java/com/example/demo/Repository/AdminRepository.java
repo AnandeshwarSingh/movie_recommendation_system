@@ -3,6 +3,8 @@ package com.example.demo.Repository;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.ContactModel;
 import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
@@ -13,7 +15,7 @@ import com.example.demo.Model.UserModel;
 public interface AdminRepository {
 	
 	//Admin Authenticate
-	public boolean validateAdmin(String username, String password);
+	public AdminModel findByEmailAndPassword(String email, String password);
 	
 	//CRUD Operation for Genre
 	public boolean isAddGenre(GenreModel genre);
@@ -35,6 +37,7 @@ public interface AdminRepository {
 	public Map<String, Object> getMovieById(int id);
 	public boolean isDeleteMovie(int id);
 	public boolean isUpdateMovie(MovieModel movie);
+	public List<Map<String, Object>> searchMovies(String keyword);
 	
 	public List<Map<String, Object>> getAllMovieByGenre(int gid);
 	public List<Map<String, Object>> getAllMovieByLanguage(int lid);
@@ -43,6 +46,7 @@ public interface AdminRepository {
 	public boolean addRating(RatingModel rating);
 	public List<Map<String, Object>> getAllRating();
 	public Map<String, Object> getRatingById(int id);
+	public boolean hasUserRatedMovie(int userId, int movieId);
 	
 	//DashBoardStats
 	public DashboardStats getDashboardStats();
@@ -50,4 +54,8 @@ public interface AdminRepository {
 	public List<Map<String,Object>> getLatestMovies();
 	public List<Map<String,Object>> getLatestUsers();
 	public List<Map<String,Object>> getLatestRating();
+	
+	//Contact
+	public boolean addContact(ContactModel contact);
+	public List<ContactModel> getAllContact();
 }

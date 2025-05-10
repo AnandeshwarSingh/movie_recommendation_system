@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Model.MovieModel;
 import com.example.demo.Model.UserModel;
 import com.example.demo.Repository.UserRepositoryImpl;
 
@@ -49,4 +50,30 @@ public class UserServiceImpl implements UserService {
 		return userRepo.findByEmailAndPassword(email, password);
 	}
 
+	@Override
+	public boolean addToWatchlist(int userId, int movieId) {
+        return userRepo.addToWatchlist(userId, movieId) > 0;
+    }
+
+    public boolean removeFromWatchlist(int userId, int movieId) {
+        return userRepo.removeFromWatchlist(userId, movieId) > 0;
+    }
+
+	@Override
+	public List<MovieModel> getWatchlistMovies(int userId) {
+		// TODO Auto-generated method stub
+		return userRepo.getWatchlistMovies(userId);
+	}
+
+	@Override
+	 public boolean updatePasswordByPhoneNumber(String phoneNumber, String newPassword) {
+        return userRepo.updatePasswordByPhoneNumber(phoneNumber, newPassword);
+    }
+
+	@Override
+	public UserModel getUserByPhoneNumber(String phoneNumber) {
+		 return userRepo.findByPhoneNumber(phoneNumber);
+	}
+
+	
 }

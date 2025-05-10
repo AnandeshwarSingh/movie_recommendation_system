@@ -3,15 +3,13 @@ package com.example.demo.Model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class AdminModel {
-    private int adminID;
-	private String adminname;
-    private String email;
-    private String password;
+public class WatchlistModel {
+    private int id;
+    private int userId;
+    private int movieId;
+
 }

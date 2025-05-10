@@ -26,12 +26,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.CustomException.GenreNotFoundException;
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.ContactModel;
 import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
 import com.example.demo.Model.MovieModel;
 import com.example.demo.Model.RatingModel;
 import com.example.demo.Service.AdminServiceImpl;
+import com.example.demo.Service.CollaborativeFilteringService;
 
 import lombok.ToString;
 
@@ -43,16 +45,9 @@ public class AdminController {
 	@Autowired
 	AdminServiceImpl adminService;
 	
-	@PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AdminModel admin) {
-        boolean isValid = adminService.authenticateAdmin(admin.getUsername(), admin.getPassword());
-        if (isValid) {
-            return ResponseEntity.ok("Admin login successful!");
-        } else {
-            return ResponseEntity.status(401).body("Invalid username or password");
-        }
-    }
-	
+	 @Autowired
+	 private CollaborativeFilteringService service;
+
 	@PostMapping("/addGenre")
 	public String addGenre(@RequestBody GenreModel genre) {
 		return (adminService.isAddGenre(genre))?"Genre Added Successfully":"OOPs Failed to Add";
@@ -211,6 +206,19 @@ public class AdminController {
         return ResponseEntity.badRequest().body("Failed to update movie!");
     }
 	
+	// Add new contact form entry
+    @PostMapping("/addContact")
+    public String addContact(@RequestBody ContactModel contact) {
+        boolean success = adminService.addContact(contact);
+        return success ? "Contact form submitted successfully!" : "Failed to submit contact form.";
+    }
+
+    // Get all contact form entries
+    @GetMapping("/getContact")
+    public List<ContactModel> getAllContacts() {
+        return adminService.getAllContact();
+    }
+    
 	@GetMapping("/getAllMovieByGenre/{genreId}")
     public List<Map<String,Object>> getAllMovieByGenre(@PathVariable Integer genreId) {
         return adminService.getAllMovieByGenre(genreId);
@@ -236,6 +244,16 @@ public class AdminController {
    
         return (adminService.addRating(rating))?"Rating Added Successfully":"OOPs Failed to Add";
     }
+    
+    @GetMapping("/hasRated")
+    public ResponseEntity<Boolean> hasUserRatedMovie(
+            @RequestParam int userId,
+            @RequestParam int movieId) {
+
+        boolean hasRated = adminService.hasUserRatedMovie(userId, movieId);
+        return ResponseEntity.ok(hasRated);
+    }
+    
 	@GetMapping("/stats")
 	public DashboardStats getDashboardStats() {
 	        return adminService.getDashboardStats();
@@ -260,4 +278,17 @@ public class AdminController {
 	public List<Map<String,Object>> getLatestRating(){
 		return adminService.getLatestRating();
 	}
+	
+	@GetMapping("/search")
+	public ResponseEntity<List<Map<String, Object>>> searchMovies(@RequestParam String keyword) {
+	    List<Map<String, Object>> results = adminService.searchMovies(keyword);
+	    return ResponseEntity.ok(results);
+	}
+	
+	@GetMapping("/recommend/{username}")
+	public ResponseEntity<List<Map<String, Object>>> getRecommendations(@PathVariable String username) {
+	    List<Map<String, Object>> recommendations = service.getRecommendationsForUser(username);
+	    return ResponseEntity.ok(recommendations);
+	}
+
 }

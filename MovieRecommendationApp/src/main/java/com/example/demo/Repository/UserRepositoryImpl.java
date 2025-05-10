@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
+import com.example.demo.Model.MovieModel;
 import com.example.demo.Model.UserModel;
+import com.example.demo.Model.WatchlistModel;
 
 @Repository("userRepo")
 public class UserRepositoryImpl implements UserRepository{
@@ -81,4 +83,63 @@ public class UserRepositoryImpl implements UserRepository{
 	            return null;
 	        }
 	    }
+
+	@Override
+	public int addToWatchlist(int userId, int movieId) {
+		 String sql = "INSERT INTO watchlist (user_id, movie_id) VALUES (?, ?)";
+	     return jdbcTemplate.update(sql, userId, movieId);
+	}
+
+	@Override
+	public int removeFromWatchlist(int userId, int movieId) {
+		String sql = "DELETE FROM watchlist WHERE user_id = ? AND movie_id = ?";
+        return jdbcTemplate.update(sql, userId, movieId);
+	}
+
+	@Override
+	public List<MovieModel> getWatchlistMovies(int userId) {
+        String sql = "SELECT m.* FROM movies m JOIN watchlist w ON m.movie_id = w.movie_id WHERE w.user_id = ?;";
+
+        return jdbcTemplate.query(sql,new RowMapper<MovieModel>() {
+            @Override
+            public MovieModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+                MovieModel movie = new MovieModel();
+                movie.setMovieId(rs.getInt("movie_id"));
+                movie.setMovieName(rs.getString("title"));
+                movie.setYear(rs.getString("release_year"));
+                movie.setDuration(rs.getString("duration"));
+                movie.setDirector(rs.getString("director_name"));
+                movie.setActor(rs.getString("actor_name"));
+                movie.setActress(rs.getString("actress_name"));
+                movie.setDescription(rs.getString("description"));
+                movie.setImageName(rs.getString("image_name"));
+                movie.setUrl(rs.getString("url"));
+                return movie;
+            }
+        },userId);
+    }
+
+	@Override
+	public UserModel findByPhoneNumber(String phoneNumber) {
+		String sql = "SELECT * FROM users WHERE phone_number = ?";
+		try {
+            return jdbcTemplate.queryForObject(sql,(rs, rowNum) -> {
+                UserModel user = new UserModel();
+                user.setUserId(rs.getInt("user_id"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhoneNumber(rs.getString("phone_number"));
+                return user;
+            },phoneNumber);
+        } catch (Exception e) {
+            return null; // Not found
+        }
+	}
+
+	@Override
+	public boolean updatePasswordByPhoneNumber(String phoneNumber, String newPassword) {
+		String sql = "UPDATE users SET password = ? WHERE phone_number = ?";
+        int rowsAffected = jdbcTemplate.update(sql, newPassword, phoneNumber);
+        return rowsAffected > 0;
+	}
 }

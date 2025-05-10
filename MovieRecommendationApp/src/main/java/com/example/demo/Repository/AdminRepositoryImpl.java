@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.ContactModel;
 import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
@@ -31,11 +32,18 @@ public class AdminRepositoryImpl implements AdminRepository {
 	JdbcTemplate jdbcTemplate;
 	
 	//LOGIN
-	@Override
-	public boolean validateAdmin(String username, String password) {
-		   String sql="select * from admin WHERE  name=? AND password=?;";
-		   List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, username, password);
-	        return !result.isEmpty();
+	public AdminModel findByEmailAndPassword(String email, String password) {
+		String sql = "SELECT * FROM admin WHERE email = ? AND password = ?";
+	        try {
+	            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> new AdminModel(
+	                    rs.getInt("admin_id"),
+	                    rs.getString("name"),
+	                    rs.getString("email"),
+	                    rs.getString("password")       
+	            ), email, password);
+	        } catch (Exception e) {
+	            return null;
+	        }
 	}
 	
 	//ADD GENRE
@@ -202,6 +210,7 @@ public class AdminRepositoryImpl implements AdminRepository {
 	//Update Movie
 	@Override
 	public boolean isUpdateMovie(MovieModel movie) {
+	    
 		String sql = "UPDATE movies SET title=?, release_year=?, description=?, duration=?,director_name=?, actor_name=?, actress_name=?,image_name=? WHERE movie_id=?";
 		
 		int updatedRows = jdbcTemplate.update(sql, movie.getMovieName(), movie.getYear(), movie.getDescription(), 
@@ -222,7 +231,6 @@ public class AdminRepositoryImpl implements AdminRepository {
 	@Override
 	public Map<String, Object> getMovieById(int id) {
 		String sql = "SELECT m.movie_id,m.title,m.release_year,m.description,   m.duration,m.director_name,m.actor_name,m.actress_name,m.image_name,m.url,DATE(m.created_at) AS created_date,GROUP_CONCAT(DISTINCT g.name) AS genres, GROUP_CONCAT(DISTINCT l.language_name) AS language, ROUND(AVG(r.rating), 1) AS rating FROM movies m LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id LEFT JOIN language l ON ml.language_id = l.language_id LEFT JOIN  ratings r ON m.movie_id = r.movie_id WHERE m.movie_id = ? GROUP BY m.movie_id;";
-
    return jdbcTemplate.queryForMap(sql, id);
 	}
 
@@ -262,18 +270,17 @@ public class AdminRepositoryImpl implements AdminRepository {
 	@Override
 	public DashboardStats getDashboardStats() {
 		DashboardStats stats = new DashboardStats();
-		
 		stats.setTotalMovies(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM movies", Integer.class));
 	    stats.setTotalLanguages(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM language", Integer.class));
 	    stats.setTotalGenres(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM genres", Integer.class));
 	    stats.setTotalUsers(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM users", Integer.class));
 	    stats.setTotalReviews(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM ratings", Integer.class));
-
+	    stats.setTotalEnquiry(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM contact_form", Integer.class));
 	    return stats;
 	}
 	
 	public List<Map<String,Object>> getTopMovies(){
-		String sql="SELECT m.movie_id,m.title,ROUND(AVG(r.rating), 1) AS average_rating,GROUP_CONCAT(g.genre_name) AS genres FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title ORDER BY average_rating DESC LIMIT 5;";
+		String sql="SELECT m.movie_id,m.title,ROUND(AVG(r.rating), 1) AS rating,GROUP_CONCAT(DISTINCT g.name) AS genres FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title ORDER BY rating DESC LIMIT 5;";
 		return jdbcTemplate.queryForList(sql);
 	}
 	
@@ -292,4 +299,59 @@ public class AdminRepositoryImpl implements AdminRepository {
 		String sql="SELECT m.movie_id,m.title,GROUP_CONCAT(g.name) AS genre,ROUND(AVG(r.rating), 1) AS rating FROM movies m LEFT JOIN ratings r ON m.movie_id = r.movie_id LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id LEFT JOIN genres g ON mg.genre_id = g.genre_id GROUP BY m.movie_id, m.title, r.created_at ORDER BY r.created_at DESC LIMIT 5;";
 		return jdbcTemplate.queryForList(sql);
 	}
+
+	@Override
+	public List<Map<String, Object>> searchMovies(String keyword) {
+	    String sql = "SELECT m.movie_id, m.title, m.release_year, m.description, m.duration, " +
+	            "m.director_name, m.actor_name, m.actress_name, m.image_name, m.url, " +
+	            "GROUP_CONCAT(DISTINCT g.name) AS genres, " +
+	            "GROUP_CONCAT(DISTINCT l.language_name) AS language, " +
+	            "ROUND(AVG(r.rating), 1) AS rating " +
+	            "FROM movies m " +
+	            "LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id " +
+	            "LEFT JOIN genres g ON mg.genre_id = g.genre_id " +
+	            "LEFT JOIN movie_languages ml ON m.movie_id = ml.movie_id " +
+	            "LEFT JOIN language l ON ml.language_id = l.language_id " +
+	            "LEFT JOIN ratings r ON m.movie_id = r.movie_id " +
+	            "WHERE m.title LIKE ? OR m.actor_name LIKE ? OR m.actress_name LIKE ? OR m.director_name LIKE ? " +
+	            "GROUP BY m.movie_id";
+
+	    String likePattern = "%" + keyword + "%";
+	    return jdbcTemplate.queryForList(sql, likePattern, likePattern, likePattern, likePattern);
+	}
+
+	@Override
+	public boolean hasUserRatedMovie(int userId, int movieId) {
+		 String sql = "SELECT COUNT(*) FROM ratings WHERE user_id = ? AND movie_id = ?";
+	     Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, movieId);
+	     return count != null && count > 0;
+	}
+
+	@Override
+	public boolean addContact(ContactModel contact) {
+		String sql = "INSERT INTO contact_form (name, email, subject, message) VALUES (?, ?, ?, ?)";
+		int val=jdbcTemplate.update(sql,contact.getName(),contact.getEmail(),contact.getSubject(),contact.getMessage());
+		
+        return val>0;
+	}
+
+	@Override
+	public List<ContactModel> getAllContact() {
+		String sql = "SELECT * FROM contact_form";
+
+	    return jdbcTemplate.query(sql, new RowMapper<ContactModel>() {
+	        @Override
+	        public ContactModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+	            ContactModel contact = new ContactModel();
+	            contact.setId(rs.getInt("id"));
+	            contact.setName(rs.getString("name"));
+	            contact.setEmail(rs.getString("email"));
+	            contact.setSubject(rs.getString("subject"));
+	            contact.setMessage(rs.getString("message"));
+	            contact.setSubmittedAt(rs.getString("submitted_at")); 
+	            return contact;
+	        }
+	    });
+	}
+
 }

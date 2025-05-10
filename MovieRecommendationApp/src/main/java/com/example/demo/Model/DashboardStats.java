@@ -15,4 +15,5 @@ public class DashboardStats {
     private int totalGenres;
     private int totalUsers;
     private int totalReviews;
+    private int totalEnquiry;
 }

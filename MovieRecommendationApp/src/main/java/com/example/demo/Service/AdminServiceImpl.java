@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.ContactModel;
 import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
@@ -20,8 +21,8 @@ public class AdminServiceImpl implements AdminService{
 	AdminRepositoryImpl adminRepo;
 	
 	@Override
-	public boolean authenticateAdmin(String username, String password) {
-		return adminRepo.validateAdmin(username, password);
+	public AdminModel findByEmailAndPassword(String email, String password) {
+		return adminRepo.findByEmailAndPassword(email, password);
 	}
 	@Override
 	public boolean isAddGenre(GenreModel genre) {
@@ -129,5 +130,21 @@ public class AdminServiceImpl implements AdminService{
 	public List<Map<String, Object>> getLatestRating() {
 		return adminRepo.getLatestRating();
 	}
-
+	@Override
+	public List<Map<String, Object>> searchMovies(String keyword) {
+		return adminRepo.searchMovies(keyword);
+	}
+	@Override
+	public boolean hasUserRatedMovie(int userId, int movieId) {
+		return adminRepo.hasUserRatedMovie(userId, movieId);
+	}
+	@Override
+	public boolean addContact(ContactModel contact) {
+		return adminRepo.addContact(contact);
+	}
+	@Override
+	public List<ContactModel> getAllContact() {
+		return adminRepo.getAllContact();
+	}
+	
 }

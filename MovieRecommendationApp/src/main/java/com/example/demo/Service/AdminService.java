@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.demo.Model.AdminModel;
+import com.example.demo.Model.ContactModel;
 import com.example.demo.Model.DashboardStats;
 import com.example.demo.Model.GenreModel;
 import com.example.demo.Model.LanguageModel;
@@ -13,7 +14,7 @@ import com.example.demo.Model.RatingModel;
 public interface AdminService {
 	
 	//Admin Authenticate
-	boolean authenticateAdmin(String username, String password);
+	public AdminModel findByEmailAndPassword(String email, String password);
 	
 	//CRUD Operation of Genre
 	public boolean isAddGenre(GenreModel genre);
@@ -35,6 +36,7 @@ public interface AdminService {
 	public Map<String, Object> getMovieById(int id);
 	public boolean isDeleteMovie(int id);
 	public boolean isUpdateMovie(MovieModel movie);
+	public List<Map<String, Object>> searchMovies(String keyword);
 	
 	public List<Map<String, Object>> getAllMovieByGenre(int gid);
 	public List<Map<String, Object>> getAllMovieByLanguage(int lid);
@@ -42,10 +44,14 @@ public interface AdminService {
 	public boolean addRating(RatingModel rating);
 	public List<Map<String, Object>> getAllRating();
 	public Map<String, Object> getRatingById(int id);
+	public boolean hasUserRatedMovie(int userId, int movieId);
 	
 	public DashboardStats getDashboardStats();
 	public List<Map<String,Object>> getTopMovies();
 	public List<Map<String,Object>> getLatestMovies();
 	public List<Map<String,Object>> getLatestUsers();
 	public List<Map<String,Object>> getLatestRating();
+	
+	public boolean addContact(ContactModel contact);
+	public List<ContactModel> getAllContact();
 }

@@ -9,9 +9,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AdminModel {
-    private int adminID;
-	private String adminname;
-    private String email;
-    private String password;
+public class ContactModel {
+		private int id;
+	    private String name;
+	    private String email;
+	    private String subject;
+	    private String message;
+	    private String submittedAt;
 }
